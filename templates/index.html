@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sundar's Local GPT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>🤖 Sundar's Local GPT</h1>
+
+        <div id="chat-box"></div>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your question..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userMessage = document.getElementById("user-input").value.trim();
+            if (!userMessage) return;
+
+            // Display user message
+            const chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += `<div class="message user">${userMessage}</div>`;
+
+            document.getElementById("user-input").value = "";
+
+            // Send request to backend
+            const res = await fetch("http://127.0.0.1:5001/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: userMessage })
+            });
+
+            const data = await res.json();
+
+            // Display GPT's response
+            chatBox.innerHTML += `<div class="message bot">${data.response}</div>`;
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
